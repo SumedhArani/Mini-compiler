@@ -26,14 +26,12 @@ int hash_search(char *str,int scp);
 void init_symtable();
 void print_table();
 
-
-
 int hash(char *str,int i)
 {
     unsigned long hash = 5381;
     int c;
 
-    while (c = *str++)
+    while ((c = *(str++)))
     {
         hash = ((hash << 4) + hash) + c; /* hash * 33 + c */
     }
