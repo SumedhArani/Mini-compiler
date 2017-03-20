@@ -10,9 +10,9 @@ extern FILE *yyin;
 int main(int argc, char *argv[])
 {
 	init_symtable();
-	char str[100];
+	//char str[100];
 	 FILE *fp;
-	 int i;
+	 //int i;
 	 if(argc>1)
 	 { 
 	 	fp = fopen(argv[1],"r");
