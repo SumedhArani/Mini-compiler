@@ -25,7 +25,7 @@ ALPHA [A-Za-z]
 DIGIT [0-9]
 ALPHANUMERIC [A-Za-z0-9]
 UNDERSCORE	"_"
-EQUALS_OP "="
+EQ_OP "="
 LT_OP "<"
 GT_OP ">"
 LTE_OP "<="
@@ -60,7 +60,7 @@ ART_OP [-+*/]
 {ALPHA}({ALPHANUMERIC}|{UNDERSCORE})* {/*printf("Found Identifier: %s\n",yytext);yylval.idname=strdup(yytext);*/hash_insert(yytext,"ID",line_num,scope,p_scope);return ID;}
 {CLOSE_S} {hash_insert(yytext,"CLOSE_S",line_num,scope,p_scope);return CLOSE_S;}
 {OPEN_S} {hash_insert(yytext,"OPEN_S",line_num,scope,p_scope);return OPEN_S;}
-{EQUALS_OP} {hash_insert(yytext,"EQUALS_OP",line_num,scope,p_scope);return EQUALS_OP;}
+{EQ_OP} {hash_insert(yytext,"EQ_OP",line_num,scope,p_scope);return EQ_OP;}
 {LT_OP} {hash_insert(yytext,"LT_OP",line_num,scope,p_scope);return LT_OP;}
 {GT_OP} {hash_insert(yytext,"GT_OP",line_num,scope,p_scope);return GT_OP;}
 {LTE_OP} {hash_insert(yytext,"LTE_OP",line_num,scope,p_scope);return LTE_OP;}
