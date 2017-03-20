@@ -24,7 +24,7 @@
     //int p_scope;
 }
 
-%token NEW_LINE SEM_COL COL OPEN_F CLOSE_F DATA_TYPE CLOSE_S OPEN_S EQUALS_OP LT_OP GT_OP LTE_OP GTE_OP ETE_OP OPEN_P CLOSE_P  D_QUOTES S_QUOTES
+%token NEW_LINE SEM_COL COL OPEN_F CLOSE_F DATA_TYPE CLOSE_S OPEN_S EQ_OP LT_OP GT_OP LTE_OP GTE_OP ETE_OP OPEN_P CLOSE_P  D_QUOTES S_QUOTES
 
 %token <idname> ID STRING CHAR KEYWORD ART_OP DIGIT 
 %%
@@ -40,7 +40,7 @@ program:
         | program ID      {  }
         | program CLOSE_S     {  }
         | program OPEN_S      {  }
-        | program EQUALS_OP       {  }
+        | program EQ_OP       {  }
         | program LT_OP      {  }
         | program GT_OP      {  }
         | program LTE_OP      {  }
