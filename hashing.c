@@ -100,7 +100,7 @@ void print_table()
 	for(i=0;i<SYMTABSIZE;i++) {
 		if(strcmp(symtab[i].name,"NIL")!=0)
 		{
-			printf("| %d\t| %s\t| %s\t| %d\t|",i,symtab[i].name,symtab[i].type,symtab[i].attr.scope);
+			printf("| %6d| %11s| %11s| %13d|",i,symtab[i].name,symtab[i].type,symtab[i].attr.scope);
 			int j=0;
 			//printf("LINE NUMBERS:");
 			for(;j<symtab[i].ln-1;j++)
