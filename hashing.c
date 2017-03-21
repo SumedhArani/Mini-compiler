@@ -93,13 +93,14 @@ void print_table()
 {
 	int i;
 	printf("SYMBOL TABLE\n");
-	printf("----------------------------------------------------\n");
-	printf("|INDEX\t|NAME\t|TYPE\t\t| SCOPE NUMBER\t| LINE NUMBERS |\n");
-	printf("----------------------------------------------------\n");
+	printf("|-------!------------!------------!--------------!----------------------|\n");
+	printf("| INDEX | TOKEN NAME | TOKEN TYPE | SCOPE NUMBER | LINE NUMBERS \t|\n");
+	printf("|=======+============+============+==============+======================|\n");
+	printf("|-------!------------!------------!--------------!----------------------|\n");
 	for(i=0;i<SYMTABSIZE;i++) {
 		if(strcmp(symtab[i].name,"NIL")!=0)
 		{
-			printf("|%d\t|%s\t%s\t\t|%d\t|",i,symtab[i].name,symtab[i].type,symtab[i].attr.scope);
+			printf("| %d\t| %s\t| %s\t| %d\t|",i,symtab[i].name,symtab[i].type,symtab[i].attr.scope);
 			int j=0;
 			//printf("LINE NUMBERS:");
 			for(;j<symtab[i].ln-1;j++)
@@ -107,8 +108,8 @@ void print_table()
 				printf("%d, ",symtab[i].line_num[j]);
 			}
 			printf("%d\n",symtab[i].line_num[j]);
+			printf("|-------+------------+------------+--------------+----------------------|\n");
 		}
 	}
-	printf("----------------------------------------------------\n");
 return;
 }
