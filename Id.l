@@ -14,6 +14,9 @@ int p_scope = -2;
 int scope_st[30];
 int s_n = 0;
 
+int for_f = 0;
+int scp_in = 0;
+
 int str=0;
 int chr=0;
 
@@ -125,11 +128,28 @@ OR "|"
 		}
 
 {TYPE}  {
+			if(for_f == 1)
+			{
+				p_scope=scope;
+				scope=++h_scope;
+				scope_st[++s_n]=scope;
+				scp_in = 1;
+			}
 			yylval = hash_insert(yytext,"TYPE_KW",line_num,scope,p_scope);
 			return TYPE;
 		}
 
 {SEM_COL}  	{
+				if(for_f != 0)
+				{
+					for_f++;
+					if(for_f==4)
+					{
+						scope=scope_st[--s_n];
+						p_scope=scope_st[s_n-1];
+						for_f=0;
+					}
+				}
 				yylval = hash_insert(yytext,"SEM_COL",line_num,scope,p_scope);
 				return SEM_COL;
 			}
@@ -173,10 +193,21 @@ OR "|"
 				return DIGIT;
 			}
 
+{DIGIT}*[.]{DIGIT}*	{
+						yylval = hash_insert(yytext,"D_DIGIT",line_num,scope,p_scope);
+						return D_DIGIT;
+					}
+
 {OPEN_F} 	{
-				p_scope=scope;
-				scope=++h_scope;
-				scope_st[++s_n]=scope;
+				if (scp_in == 0)
+				{
+					p_scope=scope;
+					scope=++h_scope;
+					scope_st[++s_n]=scope;
+				}
+				else
+					scp_in = 0;
+				for_f = 0;
 				yylval = hash_insert(yytext,"OPEN_F",line_num,scope,p_scope);
 				return OPEN_F;
 			}
@@ -190,6 +221,7 @@ OR "|"
 
 {FOR_KW} 	{
 				/*yylval.idname=strdup(yytext);*/
+				for_f = 1;
 				yylval = hash_insert(yytext,"FOR_KW",line_num,scope,p_scope);
 				return FOR_KW;
 			}
@@ -344,7 +376,7 @@ OR "|"
 
 int yywrap(void)        /* called at end of input */
 {
-    printf("In Wrap\n");
+    //printf("In Wrap\n");
     return 1;           /* terminate now */
 }
 

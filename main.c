@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 	 yyin = fp;
 	 scope_st[0]=-1;
 	int p=yyparse();
-	printf("Return Value of yyparse: %d\n",p);
+	//printf("Return Value of yyparse: %d\n",p);
 	print_table();
 	return 0;
 }
