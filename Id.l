@@ -5,7 +5,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include "y.tab.h"
-#include "hashing.c"
+#include "hashing.h"
 
 int line_num = 0;
 int h_scope = -1;   //highest scope
@@ -48,6 +48,8 @@ RETURN_KW "return"
 TYPE "int"|"char"|"float"|"short"|"long"|"double"
 OPEN_S "["
 CLOSE_S "]"
+UN_MINUS "--"
+UN_PLUS "++"
 PLUS "+"
 MINUS "-"
 MUL "*"
@@ -82,6 +84,8 @@ OR "|"
 {TYPE}   {hash_insert(yytext,"TYPE_KW",line_num,scope,p_scope);return TYPE;}
 {SEM_COL}  {hash_insert(yytext,"SEM_COL",line_num,scope,p_scope);return SEM_COL;}
 {COL}  {hash_insert(yytext,"COL",line_num,scope,p_scope);return COL;}
+{UN_PLUS}  {hash_insert(yytext,"UN_PLUS",line_num,scope,p_scope);return UN_PLUS;}
+{UN_MINUS}  {hash_insert(yytext,"UN_MINUS",line_num,scope,p_scope);return UN_MINUS;}
 {PLUS}  {/*yylval.idname=strdup(yytext);*/hash_insert(yytext,"PLUS",line_num,scope,p_scope);return PLUS;}
 {MINUS}  {/*yylval.idname=strdup(yytext);*/hash_insert(yytext,"MINUS",line_num,scope,p_scope);return MINUS;}
 {DIV}  {/*yylval.idname=strdup(yytext);*/hash_insert(yytext,"DIV",line_num,scope,p_scope);return DIV;}
