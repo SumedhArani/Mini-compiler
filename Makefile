@@ -6,11 +6,12 @@ lex.yy.c : Id.l
 	lex Id.l
 hashing.o : hashing.c hashing.h
 	gcc -c -std=c11 hashing.c
-main.o : main.c hashing.h
+main.o : main.c hashing.h Id.y Id.l
 	gcc -c -std=c11 main.c
 
 clean:
 	rm *.o*
 	rm y.tab.*
 	rm lex.yy.c
+	rm *.*~
 	

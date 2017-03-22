@@ -3,25 +3,6 @@
 #include<stdlib.h>
 #include "hashing.h"
 
-#define SYMTABSIZE 997
-
-struct attribute{
-char *data_type;
-int scope;
-int p_scope;
-};
-
-struct node{
-	char *name;
-	char *type;
-	struct attribute attr;
-	int line_num[30];
-	int ln;
-};
-
-struct node symtab[SYMTABSIZE];
-
-
 int hash(char *str,int i)
 {
     unsigned long hash = 5381;

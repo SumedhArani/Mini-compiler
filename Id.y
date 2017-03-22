@@ -2,16 +2,12 @@
     #include <stdio.h>
     #include <unistd.h>
     #include <fcntl.h>
-    extern int  yylex();
+    #define SYMTABSIZE 997
+    extern int yylex();
     extern void yyerror(char *);
     #include "hashing.h"
+    extern struct node symtab[SYMTABSIZE];
 %}
-
-%union
-{
-	int iVal;
-	char *idname;
-}
 
 %token NEW_LINE SEM_COL COL OPEN_F CLOSE_F DATA_TYPE
 %token CLOSE_S OPEN_S EQ_OP LT_OP GT_OP LTE_OP GTE_OP
@@ -19,7 +15,7 @@
 %token H_INC TYPE COMMA FOR_KW WHILE_KW SWITCH_KW IF_KW
 %token ELSE_KW SCAN_KW PRINT_KW STRUCT_KW RETURN_KW AND
 %token OR MUL PLUS MINUS DIV NTE_OP UN_MINUS UN_PLUS
-%token <idname> ID STRING CHAR DIGIT 
+%token ID STRING CHAR DIGIT 
 %%
 
 Include : 
