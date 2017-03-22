@@ -5,7 +5,7 @@ extern int  yylex();
 #define YYDEBUG 1
 #include "y.tab.c"
 #include "lex.yy.c"
-#include "hashing.c"
+#include "hashing.h"
 extern FILE *yyin;
 
 int main(int argc, char *argv[])
