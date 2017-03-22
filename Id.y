@@ -4,6 +4,7 @@
     #include <fcntl.h>
     extern int  yylex();
     extern void yyerror(char *);
+    #include "hashing.h"
 %}
 
 %union
@@ -17,7 +18,7 @@
 %token ETE_OP OPEN_P CLOSE_P  D_QUOTES S_QUOTES HF_NAME
 %token H_INC TYPE COMMA FOR_KW WHILE_KW SWITCH_KW IF_KW
 %token ELSE_KW SCAN_KW PRINT_KW STRUCT_KW RETURN_KW AND
-%token OR MUL PLUS MINUS DIV NTE_OP
+%token OR MUL PLUS MINUS DIV NTE_OP UN_MINUS UN_PLUS
 %token <idname> ID STRING CHAR DIGIT 
 %%
 
@@ -51,6 +52,7 @@ Expr :
     For Expr
     | Define Expr
     | Initialise Expr
+    | Unary SEM_COL Expr
     | Scan SEM_COL Expr
     | Print SEM_COL Expr
     | Assignment SEM_COL Expr
@@ -67,8 +69,17 @@ Operations :
     Value
     | Operations Arthmetic_op Operations
     | MINUS Operations
+    | Unary Operations
     | OPEN_P Operations CLOSE_P
     ;
+
+Unary : 
+    UN_MINUS Operations
+    | Operations UN_MINUS
+    | UN_PLUS Operations
+    | Operations UN_PLUS
+    ;
+
 
 Arthmetic_op : 
     PLUS
