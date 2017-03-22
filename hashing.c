@@ -39,6 +39,7 @@ int hash_insert(char *str,char *typ,int line_n,int scp,int p_scp)
 	else 
 	{
 		symtab[k].line_num[symtab[k].ln++]=line_n;
+		return k;
 	}
 	return (-1);
 }

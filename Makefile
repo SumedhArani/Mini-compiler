@@ -4,7 +4,7 @@ y.tab.c : Id.y
 	yacc -d Id.y
 lex.yy.c : Id.l
 	lex Id.l
-hashing.o : hashing.c hashing.h
+hashing.o : hashing.c hashing.h Id.y
 	gcc -c -std=c11 hashing.c
 main.o : main.c hashing.h Id.y Id.l
 	gcc -c -std=c11 main.c

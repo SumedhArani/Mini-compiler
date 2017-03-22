@@ -36,7 +36,7 @@ Function_def :
     ;
 
 Var_def : 
-    Type ID
+    Type ID 
     ;
 
 
@@ -60,7 +60,6 @@ Assignment :
     ID EQ_OP Operations
     ;
 
-
 Operations : 
     Value
     | Operations Arthmetic_op Operations
@@ -76,7 +75,6 @@ Unary :
     | Operations UN_PLUS
     ;
 
-
 Arthmetic_op : 
     PLUS
     | MINUS
@@ -87,7 +85,6 @@ Arthmetic_op :
 For : 
     FOR_KW OPEN_P For_initialise Condition For_expr CLOSE_P Body
     ;
-
 
 For_initialise : 
     Initialise
@@ -115,29 +112,25 @@ For_expr :
     | 
     ;
 
-
 Define :
-    TYPE ID SEM_COL
+    TYPE ID SEM_COL 
     ;
 
 Initialise :
-    TYPE ID Actual_parameters_PS EQ_OP Value  SEM_COL
+    TYPE ID Actual_parameters_PS EQ_OP Value SEM_COL
     ;
-
 
 Scan : 
     SCAN_KW OPEN_P D_QUOTES STRING D_QUOTES Actual_parameters_PS CLOSE_P
     ;
 
-
 Print : 
     PRINT_KW OPEN_P D_QUOTES STRING D_QUOTES Actual_parameters_PS CLOSE_P
     ;
 
-
 Actual_parameters_PS : 
     COMMA Addr Assignment Actual_parameters_PS
-    | COMMA Addr ID
+    | COMMA Addr ID 
     | 
     ;
 
