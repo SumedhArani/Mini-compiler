@@ -6,9 +6,9 @@
     #define SYMTABSIZE 997
     extern int yylex();
     extern void yyerror(char *);
-    void errorHandler(int, void (*func)(void));
-    void typeCheck();
-    void undefinedUsage();
+    void errorHandler(int, int, void (*func)(int , int));
+    void typeCheck(int , int );
+    void undefinedUsage(int , int);
     #include "hashing.h"
     extern struct node symtab[SYMTABSIZE];
     int init=0;
@@ -33,7 +33,10 @@ Include :
 
 Ext_declarator : 
     Var_def SEM_COL Ext_declarator
-    | Var_def EQ_OP Value SEM_COL Ext_declarator
+    | Var_def EQ_OP Value SEM_COL Ext_declarator {
+                if(strcmp(symtab[$1].attr.data_type, symtab[$3].attr.data_type)!=0)
+                    errorHandler($1, $3, typeCheck);
+            }
     | Function_def
     ;
 
@@ -43,10 +46,11 @@ Function_def :
     ;
 
 Var_def : 
-    Type ID {symtab[$2].attr.data_type=strdup(symtab[$1].name);
+    Type ID {   symtab[$2].attr.data_type=strdup(symtab[$1].name);
             /*check if its(ID) data_type attribute is not NIL; if NIL-->print error*/
             if(strcmp(symtab[$2].attr.data_type, "NIL")==0)
-                errorHandler($2, undefinedUsage);
+                errorHandler($2, -1, undefinedUsage);
+            $$ = $2;
         }
     ;
 
@@ -79,19 +83,23 @@ Assignment :
     ID EQ_OP Operations {
         if(init==1){
             symtab[$3].attr.data_type=strdup(type);
+            if(strcmp(symtab[$1].attr.data_type, symtab[$3].attr.data_type)!=0)
+                    errorHandler($1, $3, typeCheck);
         }
         else {
                 init = 0;
                 /*check if its data_type attribute is not NIL; if NIL-->print error*/
                 if(strcmp(symtab[$3].attr.data_type, "NIL")==0)
-                    errorHandler($3, undefinedUsage);
+                    errorHandler($3, -1, undefinedUsage);
+                if(strcmp(symtab[$1].attr.data_type, symtab[$3].attr.data_type)!=0)
+                    errorHandler($1, $3, typeCheck);
         }
     }
     ;
 
 
 Operations : 
-    Value
+    Value 
     | Operations Arthmetic_op Operations
     | MINUS Operations
     | Unary Operations
@@ -144,22 +152,31 @@ For_expr :
     | ID EQ_OP Operations {
             /*check if its(ID) data_type attribute is not NIL; if NIL-->print error*/
             if(strcmp(symtab[$1].attr.data_type, "NIL")==0)
-                errorHandler($1, undefinedUsage);
+                errorHandler($1, -1, undefinedUsage);
+            if(strcmp(symtab[$1].attr.data_type, symtab[$3].attr.data_type)!=0)
+                    errorHandler($1, $3, typeCheck);
+            $$ = $1;
         }
     | 
     ;
 
 
 Define :
-    TYPE ID SEM_COL  {symtab[$2].attr.data_type=strdup(symtab[$1].name);}
+    TYPE ID SEM_COL  {
+            symtab[$2].attr.data_type=strdup(symtab[$1].name);
+            $$ = $2;
+        }
     ;
 
 Initialise :
     TYPE ID Actual_parameters_PS EQ_OP Value  SEM_COL {
             //printf("Still in Initialise\n");
+            $$ = $2;
             init = 1;
             type=strdup(symtab[$1].name);
             symtab[$2].attr.data_type=strdup(symtab[$1].name);
+            if(strcmp(symtab[$2].attr.data_type, symtab[$5].attr.data_type)!=0)
+                    errorHandler($2, $5, typeCheck);
         }
     ;
 
@@ -177,13 +194,14 @@ Print :
 Actual_parameters_PS : 
     COMMA Addr Assignment Actual_parameters_PS
     | COMMA Addr ID Actual_parameters_PS {
+                    $$ = $1;
                     if(init==1){
                         symtab[$3].attr.data_type=strdup(type);
                     }
                     else {
                         /*check if its(ID) data_type attribute is not NIL; if NIL-->print error*/
                         if(strcmp(symtab[$3].attr.data_type, "NIL")==0)
-                            errorHandler($3, undefinedUsage);
+                            errorHandler($3, -1, undefinedUsage);
                     }
                 }
     |  {init = 0;}
@@ -196,31 +214,39 @@ Addr :
     ;
 
 Formal_parameters1 : 
-    TYPE ID Formal_parameters2 {symtab[$2].attr.data_type=strdup(symtab[$1].name);}
+    TYPE ID Formal_parameters2 {
+            $$ = $2;
+            symtab[$2].attr.data_type=strdup(symtab[$1].name);
+        }
     ;
 
 Formal_parameters2 : 
-    COMMA TYPE ID Formal_parameters2 {symtab[$3].attr.data_type=strdup(symtab[$2].name);}
+    COMMA TYPE ID Formal_parameters2 {
+            $$ = $3;
+            symtab[$3].attr.data_type=strdup(symtab[$2].name);
+        }
     | 
     ;
 
 Type : 
-    TYPE
+    TYPE {$$ = $1;}
     | 
     ;
 
 Value : 
-    DIGIT {//printf("In Value: DIGIT\n");
+    DIGIT   {
+                $$ = $1;
             }
     | D_DIGIT {
-            //printf("In Value: D_DIGIT\n");
+                //printf("In Value: D_DIGIT\n");
+                $$ = $1;
             }
-    | STRING
-    | CHAR
-    | ID    {
+    | STRING 
+    | CHAR  { $$ = $1;}
+    | ID    {   $$ = $1;
                 /*check if its data_type attribute is not NIL; if NIL-->print error*/
                 if(strcmp(symtab[$1].attr.data_type, "NIL")==0)
-                    errorHandler($1, undefinedUsage);
+                    errorHandler($1, -1, undefinedUsage);
             }
     ;
 
@@ -230,22 +256,49 @@ void yyerror(char *s)
     fprintf(stderr, "%s\n", s);
 }
 
-void errorHandler(int index, void (*func)(void))
+void errorHandler(int index1, int index2, void (*func)(int, int))
 {
-    func();
-    fprintf(stderr, "\tVariable : %s on ", symtab[index].name);
-    fprintf(stderr, "Line Number : %d\n", symtab[index].line_num[symtab[index].ln-1]);
-    
+    func(index1, index2);
+    int lineNumber = symtab[index1].line_num[symtab[index1].ln-1];
+    static const char filename[] = "ip.c";
+    FILE *file = fopen(filename, "r");
+    int count = 0;
+    if ( file != NULL )
+    {   
+        char line[256]; /* or other suitable maximum line size */
+        while (fgets(line, sizeof line, file) != NULL) /* read a line */
+        {   
+            if (count == lineNumber)
+            {   
+                //use line or in a function return it
+                //in case of a return first close the file with "fclose(file);"
+                fprintf(stderr, " @%s:%d >> %s\n", filename, lineNumber, line);
+                fclose(file);
+                break;
+            }   
+            else
+            {   
+                count++;
+            }   
+        }   
+        fclose(file);
+    }
 }
 
-void typeCheck()
+void typeCheck(int index1, int index2)
 {
-    yyerror("Type mismatch");
+    yyerror("Error: Type mismatch");
+    char* name1 = symtab[index1].name;
+    char* type1 = symtab[index1].attr.data_type;
+    char* name2 = symtab[index2].name;
+    char* type2 = symtab[index2].attr.data_type;
+    fprintf(stderr, "  '%s' is of type '%s'", name1, type1);
+    fprintf(stderr, " wheareas '%s' is of type '%s'\n", name2, type2);
 }
 
-void undefinedUsage()
+void undefinedUsage(int index1, int index2)
 {
-    yyerror("Undefined Usage");
+    yyerror("Error: Undefined Usage");
+    char* name1 = symtab[index1].name;
+    fprintf(stderr, "  No previous definition found for '%s'\n", name1);
 }
-
-

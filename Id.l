@@ -190,11 +190,13 @@ OR "|"
 {DIGIT}*	{
 				/*yylval.idname=strdup(yytext);*/
 				yylval = hash_insert(yytext,"DIGIT",line_num,scope,p_scope);
+				strcpy(symtab[yylval].attr.data_type, "int");
 				return DIGIT;
 			}
 
 {DIGIT}*[.]{DIGIT}*	{
 						yylval = hash_insert(yytext,"D_DIGIT",line_num,scope,p_scope);
+						strcpy(symtab[yylval].attr.data_type, "float");
 						return D_DIGIT;
 					}
 
