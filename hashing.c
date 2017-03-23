@@ -17,7 +17,7 @@ int hash(char *str,int i)
 }
 int hash_insert(char *str,char *typ,int line_n,int scp,int p_scp) 
 {
-	printf("inserting %s\n",str);
+	//printf("inserting %s\n",str);
 	int k=hash_search(str,scp);
 	if(k==-1) {
 		int i=0;
@@ -41,6 +41,7 @@ int hash_insert(char *str,char *typ,int line_n,int scp,int p_scp)
 		symtab[k].line_num[symtab[k].ln++]=line_n;
 		return (k);
 	}
+	return -1;
 }
 int hash_search(char *str,int scp)
 {

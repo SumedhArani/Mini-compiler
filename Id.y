@@ -6,6 +6,9 @@
     #define SYMTABSIZE 997
     extern int yylex();
     extern void yyerror(char *);
+    void errorHandler(int, void (*func)(void));
+    void typeCheck();
+    void undefinedUsage();
     #include "hashing.h"
     extern struct node symtab[SYMTABSIZE];
     int init=0;
@@ -40,9 +43,12 @@ Function_def :
     ;
 
 Var_def : 
-    Type ID {symtab[$2].attr.data_type=strdup(symtab[$1].name);/*check if its(ID) data_type attribute is not NIL; if NIL-->print error*/}
+    Type ID {symtab[$2].attr.data_type=strdup(symtab[$1].name);
+            /*check if its(ID) data_type attribute is not NIL; if NIL-->print error*/
+            if(strcmp(symtab[$2].attr.data_type, "NIL")==0)
+                errorHandler($2, undefinedUsage);
+        }
     ;
-
 
 Body : 
     OPEN_F Expr CLOSE_F
@@ -70,7 +76,17 @@ Expr :
     ;
 
 Assignment : 
-    ID EQ_OP Operations {if(init==1){symtab[$3].attr.data_type=strdup(type);}else {init = 0;/*check if its data_type attribute is not NIL; if NIL-->print error*/}}
+    ID EQ_OP Operations {
+        if(init==1){
+            symtab[$3].attr.data_type=strdup(type);
+        }
+        else {
+                init = 0;
+                /*check if its data_type attribute is not NIL; if NIL-->print error*/
+                if(strcmp(symtab[$3].attr.data_type, "NIL")==0)
+                    errorHandler($3, undefinedUsage);
+        }
+    }
     ;
 
 
@@ -125,7 +141,11 @@ Relational_op :
 For_expr : 
     Scan
     | Print
-    | ID EQ_OP Operations {/*check if its(ID) data_type attribute is not NIL; if NIL-->print error*/}
+    | ID EQ_OP Operations {
+            /*check if its(ID) data_type attribute is not NIL; if NIL-->print error*/
+            if(strcmp(symtab[$1].attr.data_type, "NIL")==0)
+                errorHandler($1, undefinedUsage);
+        }
     | 
     ;
 
@@ -135,7 +155,12 @@ Define :
     ;
 
 Initialise :
-    TYPE ID Actual_parameters_PS EQ_OP Value  SEM_COL {printf("Still in Initialise\n");init = 1;type=strdup(symtab[$1].name);symtab[$2].attr.data_type=strdup(symtab[$1].name);}
+    TYPE ID Actual_parameters_PS EQ_OP Value  SEM_COL {
+            //printf("Still in Initialise\n");
+            init = 1;
+            type=strdup(symtab[$1].name);
+            symtab[$2].attr.data_type=strdup(symtab[$1].name);
+        }
     ;
 
 
@@ -151,7 +176,16 @@ Print :
 
 Actual_parameters_PS : 
     COMMA Addr Assignment Actual_parameters_PS
-    | COMMA Addr ID Actual_parameters_PS {if(init==1){symtab[$3].attr.data_type=strdup(type);} else {/*check if its(ID) data_type attribute is not NIL; if NIL-->print error*/}}
+    | COMMA Addr ID Actual_parameters_PS {
+                    if(init==1){
+                        symtab[$3].attr.data_type=strdup(type);
+                    }
+                    else {
+                        /*check if its(ID) data_type attribute is not NIL; if NIL-->print error*/
+                        if(strcmp(symtab[$3].attr.data_type, "NIL")==0)
+                            errorHandler($3, undefinedUsage);
+                    }
+                }
     |  {init = 0;}
     ;
 
@@ -176,11 +210,18 @@ Type :
     ;
 
 Value : 
-    DIGIT {printf("In Value: DIGIT\n");}
-    | D_DIGIT {printf("In Value: D_DIGIT\n");}
+    DIGIT {//printf("In Value: DIGIT\n");
+            }
+    | D_DIGIT {
+            //printf("In Value: D_DIGIT\n");
+            }
     | STRING
     | CHAR
-    | ID {/*check if its data_type attribute is not NIL; if NIL-->print error*/}
+    | ID    {
+                /*check if its data_type attribute is not NIL; if NIL-->print error*/
+                if(strcmp(symtab[$1].attr.data_type, "NIL")==0)
+                    errorHandler($1, undefinedUsage);
+            }
     ;
 
 %%
@@ -188,3 +229,23 @@ void yyerror(char *s)
 {
     fprintf(stderr, "%s\n", s);
 }
+
+void errorHandler(int index, void (*func)(void))
+{
+    func();
+    fprintf(stderr, "\tVariable : %s on ", symtab[index].name);
+    fprintf(stderr, "Line Number : %d\n", symtab[index].line_num[symtab[index].ln-1]);
+    
+}
+
+void typeCheck()
+{
+    yyerror("Type mismatch");
+}
+
+void undefinedUsage()
+{
+    yyerror("Undefined Usage");
+}
+
+

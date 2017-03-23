@@ -1,5 +1,3 @@
-pgm : Id.out
-	./Id.out ip.c
 Id.out : y.tab.c lex.yy.c hashing.o main.o 
 	gcc -std=c11 hashing.o main.o -o Id.out
 y.tab.c : Id.y
@@ -17,3 +15,8 @@ clean:
 	rm lex.yy.c
 	rm *.*~
 	
+test: Id.out
+	./Id.out ip.c
+
+symtable: Id.out
+	./Id.out ip.c -symtable
