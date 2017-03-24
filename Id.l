@@ -16,6 +16,7 @@ int s_n = 0;
 
 int for_f = 0;
 int scp_in = 0;
+int type_seen = 0;
 
 int str=0;
 int chr=0;
@@ -133,13 +134,17 @@ OR "|"
 				p_scope=scope;
 				scope=++h_scope;
 				scope_st[++s_n]=scope;
+				p_scope_table[scope] = p_scope;
+				p_scope_table[29]=h_scope;
 				scp_in = 1;
 			}
+			type_seen = 1;
 			yylval = hash_insert(yytext,"TYPE_KW",line_num,scope,p_scope);
 			return TYPE;
 		}
 
 {SEM_COL}  	{
+				yylval = hash_insert(yytext,"SEM_COL",line_num,scope,p_scope);
 				if(for_f != 0)
 				{
 					for_f++;
@@ -150,7 +155,8 @@ OR "|"
 						for_f=0;
 					}
 				}
-				yylval = hash_insert(yytext,"SEM_COL",line_num,scope,p_scope);
+				type_seen = 0;
+				
 				return SEM_COL;
 			}
 
@@ -206,10 +212,13 @@ OR "|"
 					p_scope=scope;
 					scope=++h_scope;
 					scope_st[++s_n]=scope;
+					p_scope_table[scope] = p_scope;
+					p_scope_table[29]=h_scope;
 				}
 				else
 					scp_in = 0;
 				for_f = 0;
+				type_seen = 0;
 				yylval = hash_insert(yytext,"OPEN_F",line_num,scope,p_scope);
 				return OPEN_F;
 			}
@@ -278,7 +287,45 @@ OR "|"
 
 {ALPHA}({ALPHANUMERIC}|{UNDERSCORE})* {
 				/*printf("Found Identifier: %s\n",yytext);yylval.idname=strdup(yytext);*/
-				yylval = hash_insert(yytext,"ID",line_num,scope,p_scope);
+				if (type_seen == 1)
+				{
+					yylval = hash_insert(yytext,"ID",line_num,scope,p_scope);
+				}
+				else
+				{
+					int sc = scope;
+					int insert = 0;
+					int k;
+					while(insert == 0 && sc != -2)
+					{
+						//printf("ID");
+						k=hash_search(yytext,sc);
+						if (k != -1)
+						{
+							//printf("1st IF\n");
+							if(strcmp(symtab[k].attr.data_type,"NIL")!=0)
+							{
+								yylval = hash_insert(yytext,"ID",line_num,symtab[k].attr.scope,symtab[k].attr.p_scope);
+							}
+							else
+							{
+								yylval = hash_insert(yytext,"ID",line_num,scope,p_scope);
+							}
+							insert = 1;
+						}
+						else
+						{
+							if(sc == -1)
+								sc = -2;
+							else
+								sc=p_scope_table[sc];
+						}
+					}
+						if (sc == -2)
+						{
+							yylval = hash_insert(yytext,"ID",line_num,scope,p_scope);
+						}
+				}
 				return ID;
 			}
 

@@ -66,6 +66,10 @@ void init_symtable()
 		strcpy(symtab[k].attr.data_type,"NIL");
 		symtab[k].ln=0;
 	}
+	for(int i =0;i<30;i++)
+	{
+		p_scope_table[i] = -2;
+	}
 	printf("Symbol table initialised\n");
 	return ;
 }
@@ -77,7 +81,8 @@ void print_table()
 	printf("| INDEX | TOKEN NAME | TOKEN TYPE | TOKEN DATATYPE | SCOPE NUMBER | LINE NUMBERS \t|\n");
 	printf("|=======+============+============+================+==============+=====================|\n");
 	printf("|-------!------------!------------!----------------!--------------!---------------------|\n");
-	for(i=0;i<SYMTABSIZE;i++) {
+	for(i=0;i<SYMTABSIZE;i++) 
+	{
 		if(strcmp(symtab[i].name,"NIL")!=0)
 		{
 			printf("| %6d| %11s| %11s| %15s| %13d|",i,symtab[i].name,symtab[i].type,symtab[i].attr.data_type,symtab[i].attr.scope);
@@ -89,6 +94,18 @@ void print_table()
 			}
 			printf("%d\n",symtab[i].line_num[j]);
 			printf("|-------!------------!------------!----------------!--------------!---------------------|\n");
+		}
+	}
+	printf("SCOPE TABLE\n");
+	printf("|-------!--------------|\n");
+	printf("| SCOPE | PARENT SCOPE |\n");
+	printf("|=======+==============|\n");
+	printf("|-------!--------------|\n");
+	for(int i =0;i<30;i++)
+	{
+		if(p_scope_table[i]!=-2)
+		{
+			printf("| %6d| %13d|\n",i,p_scope_table[i]);
 		}
 	}
 return;

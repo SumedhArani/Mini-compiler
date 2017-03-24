@@ -16,6 +16,7 @@ struct node{
 	int ln;
 };
 
+int p_scope_table[30];
 struct node symtab[SYMTABSIZE];
 
 int hash(char *str,int i);

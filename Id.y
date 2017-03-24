@@ -1,4 +1,3 @@
-
 %{
     #include <stdio.h>
     #include <unistd.h>
@@ -223,6 +222,8 @@ Formal_parameters1 :
     TYPE ID Formal_parameters2 {
             $$ = $2;
             symtab[$2].attr.data_type=strdup(symtab[$1].name);
+            symtab[$2].attr.p_scope=symtab[$2].attr.scope;
+            symtab[$2].attr.scope=p_scope_table[29]+1;
         }
     ;
 
@@ -230,6 +231,8 @@ Formal_parameters2 :
     COMMA TYPE ID Formal_parameters2 {
             $$ = $3;
             symtab[$3].attr.data_type=strdup(symtab[$2].name);
+            symtab[$3].attr.p_scope=symtab[$3].attr.scope;
+            symtab[$3].attr.scope=p_scope_table[29]+1;
         }
     | 
     ;
@@ -278,7 +281,7 @@ void errorHandler(int index1, int index2, void (*func)(int, int))
             {   
                 //use line or in a function return it
                 //in case of a return first close the file with "fclose(file);"
-                fprintf(stderr, " @%s:%d >> %s\n", filename, lineNumber, line);
+                fprintf(stderr, " \033[0:36m@%s%d: >>\033[0m %s\n", filename, lineNumber, line);
                 fclose(file);
                 break;
             }   

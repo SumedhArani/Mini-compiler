@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
 	}
 	yyin = fp;
 	scope_st[0]=-1;
+	p_scope_table[29]=-1;
 	int p=yyparse();
 	//printf("Return Value of yyparse: %d\n",p);
 	if (argc>2 && strcmp(argv[2],"-symtable")==0)
