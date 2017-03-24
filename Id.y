@@ -51,7 +51,8 @@ Function_def :
     ;
 
 Var_def : 
-    Type ID {   symtab[$2].attr.data_type=strdup(symtab[$1].name);
+    Type ID {   
+        strcpy(symtab[$2].attr.data_type, symtab[$1].name);
             /*check if its(ID) data_type attribute is not NIL; if NIL-->print error*/
             if(strcmp(symtab[$2].attr.data_type, "NIL")==0)
                 errorHandler($2, -1, undefinedUsage);
@@ -87,7 +88,7 @@ Expr :
 Assignment : 
     ID EQ_OP Operations {
         if(init==1){
-            symtab[$3].attr.data_type=strdup(type);
+            strcpy(symtab[$3].attr.data_type, type);
             if(strcmp(symtab[$1].attr.data_type, "NIL")==0)
                     errorHandler($1, -1, undefinedUsage);
             if(strcmp(symtab[$1].attr.data_type, symtab[$3].attr.data_type)!=0)
@@ -170,7 +171,7 @@ For_expr :
 
 Define :
     TYPE ID SEM_COL  {
-            symtab[$2].attr.data_type=strdup(symtab[$1].name);
+            strcpy(symtab[$2].attr.data_type, symtab[$1].name);
             $$ = $2;
         }
     ;
@@ -180,8 +181,10 @@ Initialise :
             //printf("Still in Initialise\n");
             $$ = $2;
             init = 1;
-            type=strdup(symtab[$1].name);
-            symtab[$2].attr.data_type=strdup(symtab[$1].name);
+            char* temp = (char*)malloc(100*sizeof(char));
+            strcpy(temp, symtab[$1].name);
+            type = temp;
+            strcpy(symtab[$2].attr.data_type, symtab[$1].name);
             if(strcmp(symtab[$2].attr.data_type, symtab[$5].attr.data_type)!=0)
                     errorHandler($2, $5, typeCheck);
         }
@@ -203,7 +206,7 @@ Actual_parameters_PS :
     | COMMA Addr ID Actual_parameters_PS {
                     $$ = $1;
                     if(init==1){
-                        symtab[$3].attr.data_type=strdup(type);
+                        strcpy(symtab[$3].attr.data_type, type);
                     }
                     else {
                         /*check if its(ID) data_type attribute is not NIL; if NIL-->print error*/
@@ -223,7 +226,7 @@ Addr :
 Formal_parameters1 : 
     TYPE ID Formal_parameters2 {
             $$ = $2;
-            symtab[$2].attr.data_type=strdup(symtab[$1].name);
+            strcpy(symtab[$3].attr.data_type, symtab[$1].name);
             symtab[$2].attr.p_scope=symtab[$2].attr.scope;
             symtab[$2].attr.scope=p_scope_table[29]+1;
         }
@@ -232,7 +235,7 @@ Formal_parameters1 :
 Formal_parameters2 : 
     COMMA TYPE ID Formal_parameters2 {
             $$ = $3;
-            symtab[$3].attr.data_type=strdup(symtab[$2].name);
+            strcpy(symtab[$3].attr.data_type, symtab[$2].name);
             symtab[$3].attr.p_scope=symtab[$3].attr.scope;
             symtab[$3].attr.scope=p_scope_table[29]+1;
         }
@@ -285,7 +288,7 @@ void errorHandler(int index1, int index2, void (*func)(int, int))
                 //in case of a return first close the file with "fclose(file);"
                 fprintf(stderr, " \033[0:36m@%s:%d >>\033[0m %s\n", filename, lineNumber, line);
                 fclose(file);
-                break;
+                return ;
             }   
             else
             {   
