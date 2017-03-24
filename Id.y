@@ -88,14 +88,16 @@ Assignment :
     ID EQ_OP Operations {
         if(init==1){
             symtab[$3].attr.data_type=strdup(type);
+            if(strcmp(symtab[$1].attr.data_type, "NIL")==0)
+                    errorHandler($1, -1, undefinedUsage);
             if(strcmp(symtab[$1].attr.data_type, symtab[$3].attr.data_type)!=0)
                     errorHandler($1, $3, typeCheck);
         }
         else {
                 init = 0;
                 /*check if its data_type attribute is not NIL; if NIL-->print error*/
-                if(strcmp(symtab[$3].attr.data_type, "NIL")==0)
-                    errorHandler($3, -1, undefinedUsage);
+                if(strcmp(symtab[$1].attr.data_type, "NIL")==0)
+                    errorHandler($1, -1, undefinedUsage);
                 if(strcmp(symtab[$1].attr.data_type, symtab[$3].attr.data_type)!=0)
                     errorHandler($1, $3, typeCheck);
         }

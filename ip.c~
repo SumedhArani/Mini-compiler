@@ -8,6 +8,7 @@ int main(int argc, char argv)
   int a_2;
   a = 10;
   int a=10;
-  for(int a_1=0; a_1 < 11; a_1 = l+1 )
+  double k;
+  for(int a_1=0; a_1 < 11; a_1 = a_1+1 )
     printf("For %d\n", a_1);
 }
