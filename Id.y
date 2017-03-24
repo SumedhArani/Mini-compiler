@@ -283,7 +283,7 @@ void errorHandler(int index1, int index2, void (*func)(int, int))
             {   
                 //use line or in a function return it
                 //in case of a return first close the file with "fclose(file);"
-                fprintf(stderr, " \033[0:36m@%s%d: >>\033[0m %s\n", filename, lineNumber, line);
+                fprintf(stderr, " \033[0:36m@%s:%d >>\033[0m %s\n", filename, lineNumber, line);
                 fclose(file);
                 break;
             }   
