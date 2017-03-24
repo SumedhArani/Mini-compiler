@@ -1,9 +1,15 @@
+
 %{
     #include <stdio.h>
     #include <unistd.h>
     #include <fcntl.h>
     #include <string.h>
     #define SYMTABSIZE 997
+    #define Color_Red "\033[0:31m" // Color Start
+    #define Color_end "\033[0m" // To flush out prev settings
+    #define LOG_RED(X) fprintf(stderr, "%s %s %s",Color_Red,X,Color_end)
+    #define Color_Blue "\033[22;34m" // Color Start
+    #define LOG_BLUE(X) fprintf(stderr, "%s %s %s",Color_Blue,X,Color_end)
     extern int yylex();
     extern void yyerror(char *);
     void errorHandler(int, int, void (*func)(int , int));
@@ -287,18 +293,18 @@ void errorHandler(int index1, int index2, void (*func)(int, int))
 
 void typeCheck(int index1, int index2)
 {
-    yyerror("Error: Type mismatch");
+    LOG_BLUE("Error: Type Mismatch\n");
     char* name1 = symtab[index1].name;
     char* type1 = symtab[index1].attr.data_type;
     char* name2 = symtab[index2].name;
     char* type2 = symtab[index2].attr.data_type;
-    fprintf(stderr, "  '%s' is of type '%s'", name1, type1);
-    fprintf(stderr, " wheareas '%s' is of type '%s'\n", name2, type2);
+    fprintf(stderr, "  \033[0:31m%s\033[0m is of type \033[0:31m%s\033[0m", name1, type1);
+    fprintf(stderr, " wheareas \033[0:31m%s\033[0m is of type \033[0:31m%s\033[0m\n", name2, type2);
 }
 
 void undefinedUsage(int index1, int index2)
 {
-    yyerror("Error: Undefined Usage");
+    LOG_BLUE("Error: Undefined Usage\n");
     char* name1 = symtab[index1].name;
-    fprintf(stderr, "  No previous definition found for '%s'\n", name1);
+    fprintf(stderr, "  No previous definition found for \033[0:31m%s\033[0m\n", name1);
 }
