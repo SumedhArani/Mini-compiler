@@ -6,6 +6,7 @@ struct attribute{
 	char *data_type;
 	int scope;
 	int p_scope;
+	char for_spe[10][14];
 };
 
 struct node{
@@ -16,6 +17,7 @@ struct node{
 	int ln;
 };
 
+int p_scope_table[30];
 struct node symtab[SYMTABSIZE];
 
 int hash(char *str,int i);

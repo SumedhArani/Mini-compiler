@@ -1,13 +1,11 @@
 #include<stdio.h>
 #include<stdlib.h>
-
+int a_1 = 10.0;
 int main(int argc, char argv)
 {
-  int p = 10;
-  int a_2;
-  double k;
-  float l = 0.909;
-  printf("Hello %d\n",t,j);
-  for( int a_2=0; a < 20; a = a + 1 )
-    printf("For %d\n", a);
+  int a_2,c,s=5.0;
+  a = 10;
+  int a=10;
+  for(char a_1=0; a_1 < 11; a_1 = l+1 )
+    printf("For %c%f\n", a_2);
 }
